@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaTech | للحلول التقنية المتكاملة</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent-color: #38bdf8;
+            --accent-success: #4ade80;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 1rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .hero {
+            max-width: 1200px;
+            margin: 120px auto 60px auto;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .hero h1 span {
+            color: var(--accent-color);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: var(--bg-primary);
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background-color: #7dd3fc;
+        }
+
+        .services {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 0.5rem auto 0 auto;
+            border-radius: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* CI/CD Simulator Section */
+        .simulator-section {
+            max-width: 1200px;
+            margin: 6rem auto;
+            padding: 0 2rem;
+        }
+
+        .terminal {
+            background-color: #020617;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            direction: ltr;
+            text-align: left;
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 0.75rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #f59e0b; }
+        .dot-green { background-color: #10b981; }
+
+        .terminal-title {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .terminal-body {
+            color: #34d399;
+            font-size: 0.95rem;
+            min-height: 200px;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(5px);
+            animation: fadeInUp 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sim-controls {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        footer {
+            background-color: #020617;
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 6rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">Nova<span>Tech</span></div>
+            <ul class="nav-links">
+                <li><a href="#hero">الرئيسية</a></li>
+                <li><a href="#services">خدماتنا</a></li>
+                <li><a href="#simulator">محاكي النشر</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="hero" id="hero">
+        <h1>منظومة <span>NovaTech</span> للحلول السحابية</h1>
+        <p>مرحباً بك! هذا المشروع جاهز بالكامل ليكون هويتك الرقمية الجديدة وتجربتك العملية الأولى في ربط الخوادم وأنظمة النشر الآلي المستمر.</p>
+        <a href="#simulator" class="btn">ابدأ تجربة النشر الآلي</a>
+    </section>
+
+    <section class="services" id="services">
+        <h2 class="section-title">خدماتنا الاحترافية</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">🌐</div>
+                <h3>تطوير المواقع الحديثة</h3>
+                <p>بناء واجهات مستخدم تفاعلية، سريعة ومتوافقة مع جميع الشاشات باستخدام أحدث التقنيات والمعايير البرمجية.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🖥️</div>
+                <h3>إدارة السيرفرات والبنية التحتية</h3>
+                <p>إعداد خوادم Linux والعمل على منصات AWS السحابية بكفاءة عالية، مع ضمان أمان وحماية البيانات المتكاملة.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🚀</div>
+                <h3>أنظمة النشر الحديثة CI/CD</h3>
+                <p>ربط المشاريع البرمجية بمستودعات GitHub وأتمتة عمليات النشر لتوفر الوقت والجهد وتمنع الأخطاء البشرية.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="simulator-section" id="simulator">
+        <h2 class="section-title">محاكي النشر التلقائي عبر GitHub Actions</h2>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+            <div class="terminal-title">شاشة الخادم المحاكي (EC2 Terminal)</div>
+            <div class="terminal-body" id="terminalBody">
+                <div style="color: #64748b;">// اضغط على زر "تعديل و Push" بالأسفل لرؤية سحر الـ CI/CD...</div>
+            </div>
+        </div>
+        <div class="sim-controls">
+            <button class="btn" id="simulateBtn">عمل Commit & Push إلى main</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 NovaTech. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script>
+        const terminalBody = document.getElementById('terminalBody');
+        const simulateBtn = document.getElementById('simulateBtn');
+
+        const logs = [
+            { text: "$ git push origin main", color: "#38bdf8" },
+            { text: "Enumerating objects: 5, done.", color: "#94a3b8" },
+            { text: "Counting objects: 100% (5/5), done.", color: "#94a3b8" },
+            { text: "To github.com:NovaTech/project.git\n   a1b2c3d..e5f6g7h  main -> main", color: "#4ade80" },
+            { text: "\n[GitHub Actions] Triggered workflow: 'Auto Deploy to EC2'", color: "#fbbf24" },
+            { text: "Connecting to AWS EC2 instance (13.206.84.38)...", color: "#38bdf8" },
+            { text: "Successfully authenticated via SSH Private Key.", color: "#4ade80" },
+            { text: "Executing: cd /var/www/html && git pull origin main", color: "#38bdf8" },
+            { text: "From github.com:NovaTech/project\n   a1b2c3d..e5f6g7h  main       -> origin/main", color: "#94a3b8" },
+            { text: "Updating a1b2c3d..e5f6g7h\n Fast-forward\n index.html | 2 +-", color: "#94a3b8" },
+            { text: "Nginx Reloaded successfully.", color: "#4ade80" },
+            { text: "\n🚀 Deployment Successful! Live site updated on EC2.", color: "#4ade80", weight: "bold" }
+        ];
+
+        simulateBtn.addEventListener('click', () => {
+            simulateBtn.disabled = true;
+            simulateBtn.innerText = "جاري المحاكاة ونقل البيانات...";
+            terminalBody.innerHTML = "";
+            
+            let index = 0;
+            
+            function printLine() {
+                if (index < logs.length) {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.style.color = logs[index].color;
+                    if(logs[index].weight) line.style.fontWeight = logs[index].weight;
+                    line.innerHTML = logs[index].text.replace(/\n/g, '<br>');
+                    terminalBody.appendChild(line);
+                    
+                    index++;
+                    setTimeout(printLine, 900);
+                } else {
+                    simulateBtn.disabled = false;
+                    simulateBtn.innerText = "عمل Commit & Push إلى main";
+                }
+            }
+            
+            printLine();
+        });
+    </script>
+</body>
+</html>
