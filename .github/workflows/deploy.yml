@@ -59,3 +59,4 @@ jobs:
             
             # تشغيل الحاوية الجديدة وربطها بالمنفذ المخصص لها
             sudo docker run -d --name $CONTAINER -p $PORT:80 ${{ secrets.DOCKER_USERNAME }}/tech-samood:${{ github.ref_name }}
+            
