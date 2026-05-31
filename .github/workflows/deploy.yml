@@ -1,51 +1,42 @@
-name: Enterprise Multi-Environment Deploy to EC2
+name: Docker CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main
-      - staging
       - dev
+      - stage
+      - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository Code
-        uses: actions/checkout@v4
+      # ... (خطوات الـ Build والـ Login تبقى كما هي)
 
-      - name: Determine Target Environment & Path
-        id: set-env
-        run: |
-          if [ "${{ github.ref_name }}" = "main" ]; then
-            echo "ENV_PATH=/var/www/production" >> $GITHUB_ENV
-            echo "ENV_NAME=Production" >> $GITHUB_ENV
-          elif [ "${{ github.ref_name }}" = "staging" ]; then
-            echo "ENV_PATH=/var/www/staging" >> $GITHUB_ENV
-            echo "ENV_NAME=Staging" >> $GITHUB_ENV
-          elif [ "${{ github.ref_name }}" = "dev" ]; then
-            echo "ENV_PATH=/var/www/dev" >> $GITHUB_ENV
-            echo "ENV_NAME=Development" >> $GITHUB_ENV
-          fi
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          # هنا نجعل الـ Tag يتغير حسب الفرع (dev, stage, main)
+          tags: ${{ secrets.DOCKER_USERNAME }}/tech-samood:${{ github.ref_name }}
 
-      - name: SSH into EC2 and Deploy Updates
+      - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           script: |
-            echo "🚀 Starting Deployment to Target Environment: ${{ env.ENV_NAME }}"
-            echo "📂 Target Path: ${{ env.ENV_PATH }}"
+            # سحب الحاوية الخاصة بالفرع الحالي
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/tech-samood:${{ github.ref_name }}
             
-            # الانتقال إلى المجلد المستهدف بناءً على فرع الجيت الذي حصل عليه الـ push
-            cd ${{ env.ENV_PATH }}
-            
-            # تنظيف أي تغييرات محلية غير مقصودة على السيرفر لضمان نجاح السحب
-            git reset --hard HEAD
-            
-            # سحب التحديثات من الفرع المقابل تماماً بشكل آمن
-            git pull origin ${{ github.ref_name }}
-            
-            echo "✅ Deployment to ${{ env.ENV_NAME }} completed successfully!"
+            # تحديد المنفذ بناءً على الفرع (مثلاً: dev=8081, stage=8082, main=80)
+            if [ "${{ github.ref_name }}" == "main" ]; then PORT=80; CONTAINER="prod_cont";
+            elif [ "${{ github.ref_name }}" == "stage" ]; then PORT=8082; CONTAINER="stage_cont";
+            else PORT=8081; CONTAINER="dev_cont"; fi
+
+            # إيقاف الحاوية القديمة وتشغيل الجديدة
+            sudo docker stop $CONTAINER || true
+            sudo docker rm $CONTAINER || true
+            sudo docker run -d --name $CONTAINER -p $PORT:80 ${{ secrets.DOCKER_USERNAME }}/tech-samood:${{ github.ref_name }}
