@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - dev
-      - stage
+      - staging
       - main
 
 jobs:
@@ -45,9 +45,9 @@ jobs:
             if [ "${{ github.ref_name }}" == "main" ]; then
               PORT=80
               CONTAINER="prod_container"
-            elif [ "${{ github.ref_name }}" == "stage" ]; then
+            elif [ "${{ github.ref_name }}" == "staging" ]; then
               PORT=8082
-              CONTAINER="stage_container"
+              CONTAINER="staging_container"
             else
               PORT=8081
               CONTAINER="dev_container"
