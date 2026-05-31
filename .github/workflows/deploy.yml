@@ -11,16 +11,26 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # ... (خطوات الـ Build والـ Login تبقى كما هي)
+      # 1. سحب الكود من المستودع (هذه الخطوة هي حل المشكلة في لقطة الشاشة 195)
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
+      # 2. تسجيل الدخول إلى Docker Hub باستخدام Secrets التي أنشأتها
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3. بناء الحاوية ورفعها مع Tag يعتمد على اسم الفرع (dev أو stage أو main)
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          # هنا نجعل الـ Tag يتغير حسب الفرع (dev, stage, main)
           tags: ${{ secrets.DOCKER_USERNAME }}/tech-samood:${{ github.ref_name }}
 
+      # 4. الاتصال بسيرفر AWS وتنفيذ النشر بناءً على نوع البيئة
       - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@master
         with:
@@ -28,15 +38,24 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           script: |
-            # سحب الحاوية الخاصة بالفرع الحالي
+            # سحب نسخة الحاوية الخاصة بالفرع الحالي
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/tech-samood:${{ github.ref_name }}
             
-            # تحديد المنفذ بناءً على الفرع (مثلاً: dev=8081, stage=8082, main=80)
-            if [ "${{ github.ref_name }}" == "main" ]; then PORT=80; CONTAINER="prod_cont";
-            elif [ "${{ github.ref_name }}" == "stage" ]; then PORT=8082; CONTAINER="stage_cont";
-            else PORT=8081; CONTAINER="dev_cont"; fi
+            # تحديد المنفذ واسم الحاوية بناءً على الفرع النشط
+            if [ "${{ github.ref_name }}" == "main" ]; then
+              PORT=80
+              CONTAINER="prod_container"
+            elif [ "${{ github.ref_name }}" == "stage" ]; then
+              PORT=8082
+              CONTAINER="stage_container"
+            else
+              PORT=8081
+              CONTAINER="dev_container"
+            fi
 
-            # إيقاف الحاوية القديمة وتشغيل الجديدة
+            # إيقاف الحاوية القديمة للبيئة المحددة وحذفها لتجنب التعارض
             sudo docker stop $CONTAINER || true
             sudo docker rm $CONTAINER || true
+            
+            # تشغيل الحاوية الجديدة وربطها بالمنفذ المخصص لها
             sudo docker run -d --name $CONTAINER -p $PORT:80 ${{ secrets.DOCKER_USERNAME }}/tech-samood:${{ github.ref_name }}
